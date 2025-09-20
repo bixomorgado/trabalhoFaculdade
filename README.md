@@ -68,10 +68,7 @@ pizzaria-system/
 
 ```bash
 # Clonar repositório
-git clone <url-do-repositorio>
-
-# Entrar na pasta do projeto
-cd pizzaria-system
+git clone https://github.com/Bakeend/trabalhoFaculdade.git
 
 # Instalar dependências
 npm install
