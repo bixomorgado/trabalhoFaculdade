@@ -12,8 +12,9 @@ Sistema completo de gerenciamento para pizzarias, desenvolvido em **TypeScript**
 
 ## 🎬 Demonstração
 
-![Demo](https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif)
-*GIF ilustrativo mostrando fluxo de pedidos e cadastro de clientes.*
+![Demo](https://i.postimg.cc/MpJDC3Qd/Captura-de-tela-2025-09-20-163616.png)
+
+*Imagem ilustrativa mostrando fluxo de pedidos e cadastro de clientes.*
 
 ---
 
@@ -106,47 +107,5 @@ npm install -D @types/node typescript ts-node
 * `npm run build` → Compila TypeScript para JavaScript
 * `npm run dev` → Executa em modo de desenvolvimento
 
----
-
-## 📊 Diagramas
-
-Na pasta `documentation/diagramas`:
-
-* Fluxograma do sistema (`fluxograma.drawio`)
-* Mapa mental da estrutura (`estrutura.xmind`)
 
 ---
-
-## 📝 Manual de Uso
-
-Para instruções detalhadas: [manual-uso.md](documentation/manual-uso.md)
-
----
-
-## 🤝 Contribuição
-
-1. Faça um fork deste repositório
-2. Crie uma branch: `git checkout -b minha-feature`
-3. Faça commit das alterações: `git commit -m "Minha contribuição"`
-4. Envie para a branch: `git push origin minha-feature`
-5. Abra um Pull Request
-
----
-
-## ⚠️ Avisos
-
-* Mantenha o estoque sempre atualizado.
-* Cadastre todos os clientes para histórico completo.
-* Cupons de valor fixo são invalidados após uso.
-
----
-
-## 📌 Issues e Suporte
-
-* Abra issues para bugs ou sugestões: [Issues](https://github.com/<usuario>/<repositorio>/issues)
-
----
-
-## 📜 Licença
-
-MIT License
