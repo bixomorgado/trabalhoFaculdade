@@ -50,9 +50,7 @@ pizzaria-system/
 │   ├── pedidos.json
 │   ├── historico.json
 │   └── cupons.json
-└── documentation/
-    ├── manual-uso.md
-    └── diagramas/
+└──
 ```
 
 ---
