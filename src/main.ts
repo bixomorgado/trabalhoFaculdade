@@ -1,7 +1,9 @@
 // [file name]: main.ts
 // 🔧 ARQUIVO MODIFICADO - Menu completo com console.clear()
 
+// Importações de módulos externos e internos
 import promptSync from "prompt-sync";
+// Importa todas as funções de cadastro necessárias
 import { 
   inserirCliente, 
   inserirProduto, 
@@ -16,18 +18,30 @@ import {
   listarCupons, 
   desativarCupom 
 } from "./cadastro";
+// Importa função principal de pedidos
 import { fazerPedido } from "./fazerPedidos";
+// Importa função de relatórios
 import { gerarRelatorio } from "./relatorio";
+// Importa funções de histórico do cliente
 import { obterHistoricoPorCliente, obterEstatisticasCliente } from "./historicoService";
+// Importa funções de validação
 import { validarCPF, validarEmail } from "./utils";
 
+// Configura o prompt para entrada de dados do usuário
 const prompt = promptSync();
 
+/**
+ * FUNÇÃO PRINCIPAL - Controla o fluxo principal da aplicação
+ * Menu hierárquico com navegação completa do sistema PDV
+ */
 async function main() {
-    console.clear();
-    let loop = true;
+    console.clear(); // Limpa o console ao iniciar
+    let loop = true; // Controla o loop principal
+    
+    // LOOP PRINCIPAL DO SISTEMA
     while (loop) {
         console.clear();
+        // MENU PRINCIPAL
         console.log("======= PDV PIZZARIA ==========");
         console.log("1) Pedidos");
         console.log("2) Cadastros");
@@ -36,13 +50,14 @@ async function main() {
         let resposta = Number(prompt("Escolha: "));
         console.clear();
         
+        // NAVEGAÇÃO DO MENU PRINCIPAL
         switch (resposta) {
-            case 1:
+            case 1: // MÓDULO DE PEDIDOS
                 console.log("======= PEDIDOS ==========");
-                await fazerPedido();
+                await fazerPedido(); // Chama função assíncrona de pedidos
                 break;
 
-            case 2:
+            case 2: // MÓDULO DE CADASTROS
                 console.log("======= CADASTRO ==========");
                 console.log("1) Gerenciar clientes");
                 console.log("2) Gerenciar produtos");
@@ -50,16 +65,17 @@ async function main() {
                 resposta = Number(prompt("Escolha: "));
                 console.clear();
                 
+                // SUBMENU DE CADASTROS
                 switch (resposta) {
                     case 1:
-                        gerenciarClientes();
+                        gerenciarClientes(); // Gerencia clientes
                         break;
 
                     case 2:
-                        gerenciarProdutos();
+                        gerenciarProdutos(); // Gerencia produtos
                         break;
 
-                    case 3:
+                    case 3: // Voltar ao menu principal
                         break;
 
                     default:
@@ -68,7 +84,7 @@ async function main() {
                 }
                 break;
 
-            case 3:
+            case 3: // MÓDULO DE ADMINISTRAÇÃO
                 console.log("======= ADMINISTRAÇÃO ==========");
                 console.log("1) Relatórios");
                 console.log("2) Gerenciar cupons");
@@ -76,8 +92,9 @@ async function main() {
                 console.log("4) Voltar");
                 resposta = Number(prompt("Escolha: "));
 
+                // SUBMENU DE ADMINISTRAÇÃO
                 switch (resposta) {
-                    case 1:
+                    case 1: // RELATÓRIOS
                         console.clear();
                         console.log("1) Relatório por mês");
                         console.log("2) Relatório por dia");
@@ -85,21 +102,24 @@ async function main() {
                         console.log("4) Relatório personalizado");
                         const relatorioOpcao = Number(prompt("Escolha: "));
                         
+                        // Tipos de relatórios disponíveis
                         if (relatorioOpcao === 1) {
-                            gerarRelatorio("mes");
+                            gerarRelatorio("mes"); // Relatório mensal
                         } else if (relatorioOpcao === 2) {
-                            gerarRelatorio("dia");
+                            gerarRelatorio("dia"); // Relatório diário
                         } else if (relatorioOpcao === 3) {
+                            // Relatório específico por cliente
                             const clienteId = Number(prompt("ID do cliente: "));
                             gerarRelatorio("cliente", { clienteId });
                         } else if (relatorioOpcao === 4) {
+                            // Relatório personalizado por período
                             const dataInicio = prompt("Data início (YYYY-MM-DD): ");
                             const dataFim = prompt("Data fim (YYYY-MM-DD): ");
                             gerarRelatorio("personalizado", { dataInicio, dataFim });
                         }
                         break;
                         
-                    case 2:
+                    case 2: // GERENCIAR CUPONS
                         console.clear();
                         console.log("1) Adicionar cupom");
                         console.log("2) Listar cupons");
@@ -107,14 +127,17 @@ async function main() {
                         const cupomOpcao = Number(prompt("Escolha: "));
                         
                         if (cupomOpcao === 1) {
+                            // Cadastro de novo cupom
                             const codigo = prompt("Digite o código do cupom: ");
                             const tipo = prompt("Tipo (percentual/valor): ") as "percentual" | "valor";
                             const desconto = Number(prompt("Digite o valor do desconto: "));
                             const id = inserirCupom(codigo, tipo, desconto);
                             console.log(`Cupom criado! id: ${id}`);
                         } else if (cupomOpcao === 2) {
+                            // Listagem de cupons
                             console.table(listarCupons());
                         } else if (cupomOpcao === 3) {
+                            // Desativação de cupom
                             const id = Number(prompt("Digite o ID do cupom para desativar: "));
                             if (desativarCupom(id)) {
                                 console.log("Cupom desativado com sucesso!");
@@ -124,18 +147,21 @@ async function main() {
                         }
                         break;
                         
-                    case 3:
+                    case 3: // HISTÓRICO DE CLIENTES
                         console.clear();
                         const clienteId = Number(prompt("ID do cliente para consultar histórico: "));
+                        // Obtém dados do histórico e estatísticas
                         const historico = obterHistoricoPorCliente(clienteId);
                         const estatisticas = obterEstatisticasCliente(clienteId);
                         
+                        // Exibe relatório completo do cliente
                         console.log(`\n=== HISTÓRICO DO CLIENTE #${clienteId} ===`);
                         console.log(`Total de pedidos: ${estatisticas.totalPedidos}`);
                         console.log(`Total gasto: R$${estatisticas.totalGasto.toFixed(2)}`);
                         console.log(`Ticket médio: R$${estatisticas.ticketMedio.toFixed(2)}`);
                         
                         console.log("\nÚltimos pedidos:");
+                        // Mostra os 5 últimos pedidos
                         historico.slice(-5).forEach(pedido => {
                             console.log(`\nPedido #${pedido.id} - ${new Date(pedido.data).toLocaleDateString('pt-BR')}`);
                             console.log(`Total: R$${pedido.total.toFixed(2)}`);
@@ -143,22 +169,23 @@ async function main() {
                         });
                         break;
                         
-                    case 4:
+                    case 4: // Voltar
                         break;
                 }
                 break;
 
-            case 4:
+            case 4: // SAIR DO SISTEMA
                 loop = false;
                 console.log("======= PDV PIZZARIA ==========");
                 console.log("Saindo.....");
                 break;
 
-            default:
+            default: // OPÇÃO INVÁLIDA
                 console.log("Opção inválida");
                 break;
         }
         
+        // PAUSA PARA LEITURA ANTES DE LIMPAR (exceto quando sair)
         if (loop) {
             prompt("Pressione Enter para continuar...");
             console.clear();
@@ -166,6 +193,10 @@ async function main() {
     }
 }
 
+/**
+ * FUNÇÃO DE GERENCIAMENTO DE CLIENTES
+ * Submenu completo para operações CRUD de clientes
+ */
 function gerenciarClientes() {
     let loop = true;
     while (loop) {
@@ -179,9 +210,10 @@ function gerenciarClientes() {
         const resposta = Number(prompt("Escolha: "));
         
         switch (resposta) {
-            case 1:
+            case 1: // CADASTRAR NOVO CLIENTE
                 console.clear();
                 console.log("======= CADASTRO CLIENTE ==========");
+                // Coleta dados do cliente
                 const nome = prompt("Nome do cliente: ");
                 const idade = Number(prompt("Idade do cliente: "));
                 const telefone = prompt("Número de telefone: ");
@@ -189,6 +221,7 @@ function gerenciarClientes() {
                 const email = prompt("E-mail (opcional): ");
                 const endereco = prompt("Endereço (opcional): ");
                 
+                // VALIDAÇÕES
                 if (!validarCPF(cpf)) {
                     console.log("CPF inválido!");
                     break;
@@ -199,6 +232,7 @@ function gerenciarClientes() {
                     break;
                 }
                 
+                // Tenta cadastrar o cliente
                 try {
                     const id = inserirCliente(nome, idade, telefone, cpf, email, endereco);
                     console.log(`Cliente cadastrado com ID: ${id}`);
@@ -207,18 +241,18 @@ function gerenciarClientes() {
                 }
                 break;
                 
-            case 2:
+            case 2: // LISTAR CLIENTES
                 try {
                     console.clear();
                     const clientes = listarClientes();
                     console.log("======= CLIENTES CADASTRADOS ==========");
-                    console.table(clientes);
+                    console.table(clientes); // Exibe em formato de tabela
                 } catch (error) {
                     console.error("Erro ao listar clientes:", error);
                 }
                 break;
                 
-            case 3:
+            case 3: // ATUALIZAR CLIENTE
                 console.clear();
                 const idAtualizar = Number(prompt("ID do cliente para atualizar: "));
                 const cliente = buscarClientePorId(idAtualizar);
@@ -228,6 +262,7 @@ function gerenciarClientes() {
                     break;
                 }
                 
+                // Interface de atualização com valores atuais como padrão
                 console.log("Deixe em branco para manter o valor atual");
                 const novoNome = prompt(`Nome [${cliente.nome}]: `) || cliente.nome;
                 const novaIdade = Number(prompt(`Idade [${cliente.idade}]: `) || cliente.idade);
@@ -235,6 +270,7 @@ function gerenciarClientes() {
                 const novoEmail = prompt(`E-mail [${cliente.email || ""}]: `) || cliente.email;
                 const novoEndereco = prompt(`Endereço [${cliente.endereco || ""}]: `) || cliente.endereco;
                 
+                // Executa a atualização
                 if (atualizarCliente(idAtualizar, {
                     nome: novoNome,
                     idade: novaIdade,
@@ -248,7 +284,7 @@ function gerenciarClientes() {
                 }
                 break;
                 
-            case 4:
+            case 4: // EXCLUIR CLIENTE
                 console.clear();
                 const idExcluir = Number(prompt("ID do cliente para excluir: "));
                 if (excluirCliente(idExcluir)) {
@@ -258,7 +294,7 @@ function gerenciarClientes() {
                 }
                 break;
                 
-            case 5:
+            case 5: // VOLTAR AO MENU ANTERIOR
                 loop = false;
                 break;
                 
@@ -267,6 +303,7 @@ function gerenciarClientes() {
                 break;
         }
         
+        // PAUSA ENTRE OPERAÇÕES
         if (loop && resposta !== 5) {
             prompt("Pressione Enter para continuar...");
             console.clear();
@@ -274,6 +311,10 @@ function gerenciarClientes() {
     }
 }
 
+/**
+ * FUNÇÃO DE GERENCIAMENTO DE PRODUTOS
+ * Submenu completo para operações CRUD de produtos
+ */
 function gerenciarProdutos() {
     let loop = true;
     while (loop) {
@@ -287,9 +328,10 @@ function gerenciarProdutos() {
         const resposta = Number(prompt("Escolha: "));
         
         switch (resposta) {
-            case 1:
+            case 1: // CADASTRAR NOVO PRODUTO
                 console.clear();
                 console.log("======= CADASTRO PRODUTO ==========");
+                // Coleta dados do produto
                 const produto = prompt("Digite nome do produto: ");
                 const tipo = prompt("Digite o tipo do produto: ").toLowerCase();
                 const valor = Number(prompt("Digite o valor do produto: "));
@@ -303,10 +345,10 @@ function gerenciarProdutos() {
                 }
                 break;
                 
-            case 2:
+            case 2: // LISTAR PRODUTOS (incluindo inativos)
                 try {
                     console.clear();
-                    const produtos = listarProdutos(false);
+                    const produtos = listarProdutos(false); // false = mostra todos os produtos
                     console.log("======= PRODUTOS CADASTRADOS ==========");
                     console.table(produtos);
                 } catch (error) {
@@ -314,7 +356,7 @@ function gerenciarProdutos() {
                 }
                 break;
                 
-            case 3:
+            case 3: // ATUALIZAR PRODUTO
                 console.clear();
                 const idAtualizar = Number(prompt("ID do produto para atualizar: "));
                 const produtoAntigo = listarProdutos(false).find(p => p.id === idAtualizar);
@@ -324,6 +366,7 @@ function gerenciarProdutos() {
                     break;
                 }
                 
+                // Interface de atualização com valores atuais
                 console.log("Deixe em branco para manter o valor atual");
                 const novoProduto = prompt(`Nome [${produtoAntigo.produto}]: `) || produtoAntigo.produto;
                 const novoTipo = prompt(`Tipo [${produtoAntigo.tipo}]: `) || produtoAntigo.tipo;
@@ -342,7 +385,7 @@ function gerenciarProdutos() {
                 }
                 break;
                 
-            case 4:
+            case 4: // EXCLUIR PRODUTO (exclusão lógica)
                 console.clear();
                 const idExcluir = Number(prompt("ID do produto para excluir: "));
                 if (excluirProduto(idExcluir)) {
@@ -352,7 +395,7 @@ function gerenciarProdutos() {
                 }
                 break;
                 
-            case 5:
+            case 5: // VOLTAR
                 loop = false;
                 break;
                 
@@ -361,6 +404,7 @@ function gerenciarProdutos() {
                 break;
         }
         
+        // PAUSA ENTRE OPERAÇÕES
         if (loop && resposta !== 5) {
             prompt("Pressione Enter para continuar...");
             console.clear();
@@ -368,4 +412,5 @@ function gerenciarProdutos() {
     }
 }
 
-main().catch(console.error);
+// INICIALIZAÇÃO DA APLICAÇÃO
+main().catch(console.error); // Executa a função principal e trata erros
